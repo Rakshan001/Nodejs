@@ -1,10 +1,12 @@
 const express=require('express');
 const morgan = require('morgan');
-
+const userModal = require('./models/user'); //database connection
+const dbConnection = require('./config/db')
 const app =express();
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+app.use(express.static("public"));
 
 app.use(morgan("dev"))
 
@@ -40,9 +42,19 @@ app.get('/about',(req,res) =>{
 
 app.post('/get-from-data',(req,res) =>{
     console.log(req.body)
+    console.log(req.query)
+
     res.send("Data received")
 })
 
+
+app.get('/register',(req,res) =>{
+    res.render('register')
+})
+app.post('/register',(req,res) =>{
+    console.log(req.body)
+    res.render('register sucess')
+})
 
     
 app.listen(3000)
