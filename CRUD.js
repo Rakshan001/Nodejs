@@ -124,6 +124,58 @@ app.get('/user-delete', async (req, res) => {
 });
 
 // --------------------------------------------------
+// ✅ EXTRA CRUD Operations (For REferences)
+// --------------------------------------------------
+
+// GET /users – Get all users (no filter)
+app.get('/users', async (req, res) => {
+    try {
+        const users = await userModal.find();
+        res.send(users);
+    } catch (err) {
+        res.status(500).send("Error retrieving users");
+    }
+});
+
+// GET /user/:id – Get single user by ID
+app.get('/user/:id', async (req, res) => {
+    try {
+        const user = await userModal.findById(req.params.id);
+        if (!user) return res.status(404).send("User not found");
+        res.send(user);
+    } catch (err) {
+        res.status(500).send("Invalid user ID");
+    }
+});
+
+// PATCH /user/:id – Update user by ID
+app.patch('/user/:id', async (req, res) => {
+    try {
+        const updatedUser = await userModal.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        if (!updatedUser) return res.status(404).send("User not found");
+        res.send(updatedUser);
+    } catch (err) {
+        res.status(500).send("Failed to update user");
+    }
+});
+
+// DELETE /user/:id – Delete user by ID
+app.delete('/user/:id', async (req, res) => {
+    try {
+        const deletedUser = await userModal.findByIdAndDelete(req.params.id);
+        if (!deletedUser) return res.status(404).send("User not found");
+        res.send(deletedUser);
+    } catch (err) {
+        res.status(500).send("Error deleting user");
+    }
+});
+
+
+// --------------------------------------------------
 // Start Server
 // --------------------------------------------------
 
