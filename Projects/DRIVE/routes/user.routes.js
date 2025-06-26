@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router();
 const {body,ValidationResult, validationResult} = require('express-validator')
-
+const userModel = require('../models/user.models')
+const bcrypt = require('bcrypt');
 
 
 router.get('/register',(req,res)=>{
@@ -14,7 +15,7 @@ router.post('/register',
     body('password').trim().isLength({min:4}),
 
 
-    (req,res)=>{
+    async        (req,res)=>{
     // res.send("hello from router")
     const errors = validationResult(req);
 
@@ -24,6 +25,19 @@ router.post('/register',
                 message:"Invalid Data"
             })
         }
+
+        const {name,email,password, terms} =req.body;
+
+        const hashPassword = await bcrypt.hash(password,10)
+
+        const newUser = await userModel.create({
+            name,
+            email,
+            password:hashPassword,
+            termsAccepted: terms == 'agreed',
+        })
+
+        res.json(newUser)
 
 
     console.log(errors)
